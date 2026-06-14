@@ -1,0 +1,24 @@
+name: deploy.yml
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Connect to server
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd "/home/template-fast-api" 
+            ls 
+            pm2 stop template-fast-api 
+            git pull 
+            pm2 start template-fast-api
