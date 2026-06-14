@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from .routers import user
+from .routers import auth
 from .database.session import  engine
 from .database.models import Base
 
@@ -19,6 +20,7 @@ app = FastAPI(lifespan=lifespan)
 
 
 app.include_router(user.user_router)
+app.include_router(auth.auth_router)
 
 
 @app.get("/ping")

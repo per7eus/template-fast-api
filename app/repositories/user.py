@@ -11,3 +11,13 @@ class UserRepository:
         self.session.add(user)
         await self.session.commit()
         await self.session.refresh(user)
+
+    async def find_user_by_login(self, login):
+        query = select(User).where(User.login == login)
+        result = await self.session.execute(query)
+        return result.scalar_one_or_none()
+
+    async def find_user_by_id(self, user_id):
+        query = select(User).where(User.id == user_id)
+        result = await self.session.execute(query)
+        return result.scalar_one_or_none()

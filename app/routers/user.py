@@ -7,14 +7,12 @@ from ..repositories.user import UserRepository
 from ..services import user
 from ..services.user import UserService
 from ..schemas.user import UserSchema
+from  ..database.models import User
+from ..dependencies import get_current_user, get_user_repository, get_user_service
+
+
 user_router = APIRouter(prefix="/user", tags=["user"])
 
-#для работы с классами сервиса и репозитория
-def get_user_repository(sessions: AsyncSession = Depends(get_session)):
-    return UserRepository(sessions)
-
-def get_user_service(repository: UserRepository = Depends(get_user_repository)) -> UserService:
-    return UserService(repository)
 
 
 @user_router.get("/")
@@ -26,3 +24,11 @@ async def create_user(user:UserSchema, service: UserService = Depends(get_user_s
 
     await service.create_user(user.login, user.password)
     return {"message": "User created"}
+
+@user_router.get("/me")
+async def get_me(current_user: User = Depends(get_current_user)):
+    return {
+    "id": current_user.id,
+    "login": current_user.login,
+    "message": "Это защищенные данные!"
+    }
